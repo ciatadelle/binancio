@@ -1,5 +1,6 @@
 const https = require("https");
 const fs = require("fs");
+const { create, node } = require("xmlbuilder2");
 
 function fetchP2PData(
   page = 1,
@@ -40,10 +41,27 @@ function fetchP2PData(
       res.on("end", () => {
         try {
           const jsonOutput = JSON.parse(output);
-          const resultText = JSON.stringify(jsonOutput, null, 2); // Convert the JSON output to a nicely formatted string
+          const rates = jsonOutput.data.adList.map((ad) => ({
+            from: ad.advertiserTradeCurrency,
+            to: ad.assetName,
+            in: ad.price,
+            out: ad.assetAmount,
+          }));
 
-          // Write the results to a text file
-          fs.writeFile("/home/cataloupe/Desktop/rates/results.txt", resultText, (error) => {
+          // Sort the rates by price in descending order
+          rates.sort((a, b) => b.in - a.in);
+
+          // Get the top 10 rates
+          const top10Rates = rates.slice(0, 10);
+
+          // Calculate the median of the top 10 rates
+          const median = calculateMedian(top10Rates.map((rate) => rate.in));
+
+          // Generate the XML output
+          const xmlOutput = generateXML(top10Rates, median);
+
+          // Write the XML output to a text file
+          fs.writeFile("/home/cataloupe/Desktop/rates/results.xml", xmlOutput, (error) => {
             if (error) {
               reject(error);
             } else {
@@ -63,6 +81,30 @@ function fetchP2PData(
     req.write(stringData);
     req.end();
   });
+}
+
+function calculateMedian(arr) {
+  const sortedArr = arr.slice().sort((a, b) => a - b);
+  const mid = Math.floor(sortedArr.length / 2);
+  return sortedArr.length % 2 === 0
+    ? (sortedArr[mid - 1] + sortedArr[mid]) / 2
+    : sortedArr[mid];
+}
+
+function generateXML(rates, median) {
+  const xml = create({ encoding: "UTF-8" }).ele("rates");
+
+  rates.forEach((rate) => {
+    xml
+      .ele("item")
+      .ele("from").txt(rate.from).up()
+      .ele("to").txt(rate.to).up()
+      .ele("in").txt(median.toString()).up()
+      .ele("out").txt(rate.out).up()
+      .up();
+  });
+
+  return xml.end({ prettyPrint: true });
 }
 
 module.exports = fetchP2PData;
