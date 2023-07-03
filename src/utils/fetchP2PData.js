@@ -1,4 +1,5 @@
 const https = require("https");
+const fs = require("fs");
 
 function fetchP2PData(
   page = 1,
@@ -38,8 +39,17 @@ function fetchP2PData(
 
       res.on("end", () => {
         try {
-          const jsonOuput = JSON.parse(output);
-          resolve(jsonOuput);
+          const jsonOutput = JSON.parse(output);
+          const resultText = JSON.stringify(jsonOutput, null, 2); // Convert the JSON output to a nicely formatted string
+
+          // Write the results to a text file
+          fs.writeFile("/home/cataloupe/Desktop/rates/results.txt", resultText, (error) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve();
+            }
+          });
         } catch (e) {
           reject(e);
         }
@@ -53,8 +63,6 @@ function fetchP2PData(
     req.write(stringData);
     req.end();
   });
-
-  thanks();
 }
 
 module.exports = fetchP2PData;
