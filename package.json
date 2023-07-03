@@ -1,6 +1,6 @@
 {
-  "name": "binancio",
-  "version": "1.3.0",
+  "name": "binanciotestmedian",
+  "version": "1.3.37",
   "main": "index.js",
   "bin": "index.js",
   "outDir": "./dist/",
@@ -12,11 +12,11 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --mode production"
   },
-  "author": "Sanchez Marcos",
+  "author": "Oleg",
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sanchezmarcos/binancio.git"
+    "url": "git+https://github.com/ciatadelle/binancio.git"
   },
   "keywords": [
     "binance",
@@ -25,9 +25,9 @@
     "cli"
   ],
   "bugs": {
-    "url": "https://github.com/sanchezmarcos/binancio/issues"
+    "url": "https://github.com/ciatadelle/binancio/issues"
   },
-  "homepage": "https://github.com/sanchezmarcos/binancio#readme",
+  "homepage": "https://github.com/ciatadelle/binancio#readme",
   "description": "",
   "dependencies": {
     "chalk": "^4.1.0",
